@@ -1,0 +1,78 @@
+# Initial Version to start with if no develop.version.txt exists
+# If version.mk gets bumped to 0.2 or more, then bump version here too
+version: 0.2.0
+concourse-url: https://caps-ci.helion.space
+cnap-room-id: 1098
+cnap-room-send-notification-token: w4s4vSKXeveCkjbZJFfBHJlnwfUzOfdpdYPI46Xr
+
+# UCP Buckets
+hcp-s3-build-container: hcp-cli
+hcp-s3-updates-container: hcp-cli-updates
+hcp-s3-updates-server: hcp-cli-updates-server
+hcp-api-bucket: hcp-api-develop
+
+# Note for master branch should change develop to master prior to deploying
+# everywhere in this document
+s3-bin-bucket: arpita-test
+
+# Version file in the bucket
+s3-version-key: develop-version.txt
+
+# Github parameters
+github-branch: as_160_devharness_uses_bootstrap
+github-repo-name: hpcloud/hdp-resource-manager
+github-repo-uri: git@github.com:hpcloud/hdp-resource-manager.git
+github-access-token: 8cb9906acff5ec83aefea7f01e8cb8c8e2cf041d
+github-private-key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEogIBAAKCAQEAtUvMbLVidBmQkZHjONnZrc7owrfZnADaYZvjA+MFGvMv1FtW
+  rStao5ZVQIXWssE8QT2PBbRupmXe0e1sQnBT0EgD4+NhDlLrNpdz5sYn+BLjDTK8
+  aHim9i0MM/1IVk+GEvtIqREMT37hb0J9U1xlIEdjLg0GSFsH4G23oCZuUWdxkcjn
+  tBU5NgiwOclHlUb6BVkrr5+2TugaCdw8mAwKKFoGsCGF3RkCFdsZa/gq0JesTjzj
+  z6s3h4vfadmReJxpbkFAuC/FwTpHocEPZQpFYl8WaIMcEK6YXjXAVmmjhWtD25J8
+  8qTHWAsTH/RH6B1keLoKHnBce2t7c9vrrxxUZQIDAQABAoIBAExXj8yTENNM1JjH
+  8wPEkKpk/5THMGZF4a/KoezIEyVHFHP6xmQDZpaOPnX+Jet9/W6HiotfcFy3dv21
+  WaocfN6vBJxY6kzK0+tYGWErPjdzVJMBM19Wtw/g5kuaM3TM5etmTzGKUUHEbw+X
+  0whgVuEhznzc1TFwy79Q1EsnA7tY+zCJn3A69uf14Tufwr0CxGGAtCDiZJKHRA4Y
+  X07ZLUd8GdA0sw+kclKjOHYqOJCQv4/l19EPU8n2Vz0iXSu7xHkY7huIgxlZ9KTB
+  mVh2nkjrvcHuqDn/CYmOZPSCBmwpbP1afprXLvZjtRh6/pwi5cKAtV2fOQ4k6kqQ
+  McqGll0CgYEA5NK/05mIaVF/nZfI/sjbElTRhFIR+HqMSep8h0n4ySId0ixbfXA0
+  79aUxanUGp7FlE+c0ObXUH3gKyz9Pdln2f/uqMao+LBNJUKFxgNOkaQa643mf5Tq
+  FBZtxej/TkWWZrdr+hjPiHoO+VPMoKWcUKHSOdfNhHCGt97tkx8EbdsCgYEAytQC
+  1fQRY4If2V/Xk4f1CxOQSyJiV6kKHE5Yborzl7JWDjzSuHNaESk6oPZG6saVOvOG
+  6ONv1JWag1jLpRhpM6bbviYGa2MfrAbYFY3aGmZal2P48AB5E4oGPIp/OVqDAfrP
+  eKmPi3TxNLAckTfJCQdexmS94zU40opEmoecer8CgYBpPbzYV170AXXOR4c8F6ka
+  T0RltVFqlQJ85IoNtynjZ/uLNLeHg9n1DR4zox5Yd/mrcspPEjypWpuFgBWhIqKv
+  ExTzLxt79aolnujj35V9SprPB96hgx39yysFwVna6Ap6h5Xz2wFoZasJZU9R+5lf
+  RG3qCKUPaqmrW66s4bEpzQKBgCU3O4H4c4xXnvJqtIp8YsjygQJYP8Un3hQNiApY
+  cpO+BC4+mMeBWuBVOU25go+nelBDyNhIiwdtn9lD3LHhRcRVdHJyVbE0keYlp1Zl
+  HcTETREEJfQbkhu0sqo/G1LxuaIOXC0ep5kGDxAE1GkM3FVMxeYPLAxZgqCXADl+
+  cobPAoGAYm04Zv/VcOgl2W+onEY4OJCIRHVkSb9LZytKsIcXeF+w19oJwgCnBgMP
+  hBEkJkRYL+3ClZyYKQApGnIjeMhM/Fmaan9QCWAmvC4XRQVzaik3RC46+s8cup5L
+  FedqMTmEz9qFm9kCfxmR2pCgQcRztbyPCiVx80j/jqrsbZTXgVs=
+  -----END RSA PRIVATE KEY-----
+
+# AWS Creds
+aws-access-key-id: AKIAIE5U5R6CM6JCUQVQ
+aws-secret-access-key: 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
+aws-region: us-west-2
+aws-endpoint:
+
+# Docker registry settings
+docker-registry-username:
+docker-registry-password:
+docker-registry-email:
+docker-insecure-registry:
+
+docker-registry-base-repo: docker-registry.helion.space:443/hcp/build-base
+docker-registry-base-repo-tag: develop
+docker-registry-flightrecorder-test-repo-tag: develop
+docker-registry-ipmgr-repo: docker-registry.helion.space:443/hcp/ipmgr
+docker-registry-rpmgr-repo: docker-registry.helion.space:443/hcp/rpmgr
+docker-registry-uaa-repo: docker-registry.helion.space:443/hcp/uaa
+docker-registry-nats-repo: docker-registry.helion.space:443/hcp/nats
+docker-registry-flightrecorder-repo: docker-registry.helion.space:443/hcp/flightrecorder
+docker-registry-configuration-repo: docker-registry.helion.space:443/hcp/configuration
+docker-registry-flightrecorder-test-repo: docker-registry.helion.space:443/hcp/flightrecorder-test
+docker-registry-flightentertainment-repo: docker-registry.helion.space:443/hcp/flightentertainment
+docker-registry-redis-repo: docker-registry.helion.space:443/hcp/redis

@@ -1,0 +1,1089 @@
+aliases:
+  - &failure_notification
+    params:
+      color: red
+      from: "Concourse CI"
+  - &hipchat_job_failure_notification
+    params:
+      color: red
+      from: "Concourse CI"
+      message:
+        template: "<a href='${ATC_EXTERNAL_URL}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}'>FAILED:</a> ${BRANCH}-${VERSION} ${BUILD_JOB_NAME}"
+        params:
+          VERSION: file://version-resource/number
+          BRANCH: {{github-branch}}
+  - &base_image
+    type: docker-image-fixed
+    source:
+      email: {{docker-registry-email}}
+      username: {{docker-registry-username}}
+      password: {{docker-registry-password}}
+      insecure_registries: [{{docker-insecure-registry}}]
+      repository: {{docker-registry-base-repo}}
+      tag: {{docker-registry-base-repo-tag}}
+  - &test_task_config
+    platform: linux
+    image_resource:
+      <<: *base_image
+    inputs:
+    - name: hcp
+    - name: version-resource
+    outputs:
+    - name: pre-compile
+  - &compile_task_config
+    <<: *test_task_config
+    outputs:
+    - name: bin
+  - &compile_task_config_from_precompile
+    <<: *compile_task_config
+    inputs:
+    - name: pre-compile
+    - name: version-resource
+groups:
+  - name: Build
+    jobs:
+    - patch-bump
+    - linter
+    - build-base
+    - build-ipmgr
+    - build-rpmgr
+    - build-bootstrap
+    - build-flightrecorder
+    - build-flightentertainment
+    - build-hcp
+    - test-pkg
+    - docker-images
+    - dist-devharness
+    - dist-api
+
+  - name: Pull Request
+    jobs:
+    - go-checks
+
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
+  - name: docker-image-fixed
+    type: docker-image
+    source:
+      repository: chrisrob1111/docker-image-fix
+
+  - name: hipchat-notification-resource
+    type: docker-image
+    source:
+      repository: chrisrob1111/hipchat-notification
+
+resources:
+  - name: build-event-notification-resource
+    type: hipchat-notification-resource
+    source:
+      hipchat_server_url: https://hipchat.hpcloud.net
+      token: {{cnap-room-send-notification-token}}
+      room_id: {{cnap-room-id}}
+      fail_on_error: false
+
+  - name: version-resource
+    type: semver
+    source:
+      driver: s3
+      initial_version: {{version}}
+      bucket: {{s3-bin-bucket}}
+      key: {{s3-version-key}}
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: hcp
+    type: git
+    source:
+      uri: {{github-repo-uri}}
+      branch: {{github-branch}}
+      private_key: {{github-private-key}}
+
+  - name: pr
+    type: pull-request
+    source:
+      repo: {{github-repo-name}}
+      uri: {{github-repo-uri}}
+      access_token: {{github-access-token}}
+      private_key: {{github-private-key}}
+      base_url: {{concourse-url}}
+
+  - name: base-image
+    <<: *base_image
+
+  - name: ipmgr-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-ipmgr-repo}}
+
+  - name: ipmgr-bin
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: ipmgr-([.0-9])+
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: rpmgr-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-rpmgr-repo}}
+
+  - name: rpmgr-bin
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: rpmgr-([.0-9])+
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: bootstrap-dist
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: bootstrap-([.0-9])+
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: bootstrap-dist-latest
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: flightrecorder-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-flightrecorder-repo}}
+
+  - name: flightrecorder-bin
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: flightrecorder-([.0-9])+
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: flightentertainment-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-flightentertainment-repo}}
+
+  - name: flightentertainment-bin
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: flightentertainment-([.0-9])+
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: uaa-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-uaa-repo}}
+
+  - name: nats-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-nats-repo}}
+
+  - name: nats-image-in
+    type: docker-image
+    source:
+      repository: nats
+      tag: 0.7.2
+
+  - name: nats-image-out
+    type: docker-image
+    source:
+      repository: {{docker-registry-nats-repo}}
+
+  - name: redis-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-redis-repo}}
+
+  - name: configuration-image
+    type: docker-image
+    source:
+      repository: {{docker-registry-configuration-repo}}
+
+  - name: devharness
+    type: s3
+    source:
+      bucket: {{s3-bin-bucket}}
+      regexp: hcp-developer-([0-9.]+[0-9.]+[0-9]+.*).tar.gz
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: hcp-cli-bucket
+    type: s3
+    source:
+      bucket: {{hcp-s3-build-container}}
+      regexp: hcp-([0-9.]+[0-9.]+[0-9]+.*)
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+  - name: api
+    type: s3
+    source:
+      bucket: {{hcp-api-bucket}}
+      versioned_file: ipmgr_api.yml
+      access_key_id: {{aws-access-key-id}}
+      secret_access_key: {{aws-secret-access-key}}
+      region_name: {{aws-region}}
+      endpoint: {{aws-endpoint}}
+
+jobs:
+  - name: patch-bump
+    serial: true
+    plan:
+      - aggregate:
+        - get: hcp
+          trigger: true
+      - put: version-resource
+        params: {bump: patch}
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: build-event-notification-resource
+        params:
+          color: green
+          from: "Concourse CI"
+          message:
+            template: "<a href='${ATC_EXTERNAL_URL}/pipelines/${BUILD_PIPELINE_NAME}'>STARTING BUILD:</a> ${BRANCH}-${VERSION}"
+            params:
+              VERSION: file://version-resource/number
+              BRANCH: {{github-branch}}
+
+  - name: linter
+    plan:
+      - aggregate:
+        - get: version-resource
+          trigger: true
+          passed: [build-base]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: hcp
+          passed: [build-base]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [build-base]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: linter
+        config:
+          platform: linux
+          image_resource:
+            <<: *base_image
+          inputs:
+          - name: hcp
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/all/linter.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-base
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [patch-bump]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [patch-bump]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - put: base-image
+        params:
+          build: hcp/containers/cmd/build_base
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-ipmgr
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/ipmgr/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - task: compile
+        config:
+          <<: *compile_task_config_from_precompile
+          run:
+            path: bash
+            args: ["./pre-compile/ci/pipelines/tasks/ipmgr/compile.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: ipmgr-bin
+        params:
+          from: bin/ipmgr-(.*)
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-rpmgr
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/rpmgr/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - task: compile
+        config:
+          <<: *compile_task_config_from_precompile
+          run:
+            path: bash
+            args: ["./pre-compile/ci/pipelines/tasks/rpmgr/compile.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: rpmgr-bin
+        params:
+          from: bin/rpmgr-(.*)
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-bootstrap
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/bootstrap/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - task: compile
+        config:
+          <<: *compile_task_config_from_precompile
+          run:
+            path: bash
+            args: ["./pre-compile/ci/pipelines/tasks/bootstrap/compile.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: bootstrap-dist
+        params:
+          from: bin/hcp-bootstrap_(.*)
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: bootstrap-dist-latest
+        params:
+          file: bin/hcp-bootstrap_latest_amd64.debpath/to/release-*.tgz
+          acl: public-read
+
+  - name: build-flightrecorder
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      # - task: test
+      #   file: hcp/ci/pipelines/tasks/flightrecorder/test.yml
+      - task: compile
+        config:
+          <<: *compile_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/flightrecorder/compile.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightrecorder-bin
+        params:
+          from: bin/flightrecorder-(.*)
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-flightentertainment
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/flightentertainment/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - task: compile
+        config:
+          <<: *compile_task_config_from_precompile
+          run:
+            path: bash
+            args: ["./pre-compile/ci/pipelines/tasks/flightentertainment/compile.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightentertainment-bin
+        params:
+          from: bin/flightentertainment-(.*)
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: build-hcp
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [test-pkg]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/hcp/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - task: dist
+        config:
+          platform: linux
+          image_resource:
+            <<: *base_image
+          inputs:
+          - name: pre-compile
+          - name: version-resource
+          outputs:
+          - name: updates
+          - name: dist
+          params:
+            AWS_ACCESS_KEY_ID: {{aws-access-key-id}}
+            AWS_SECRET_ACCESS_KEY: {{aws-secret-access-key}}
+            AWS_REGION: {{aws-region}}
+            HDP_S3_UPDATES_SERVER: {{hcp-s3-updates-server}}
+            HDP_S3_UPDATES_CONTAINER: {{hcp-s3-updates-container}}
+          run:
+            path: bash
+            args: ["./pre-compile/ci/pipelines/tasks/hcp/dist.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - aggregate:
+        - put: hcp-cli-bucket
+          params:
+            from: dist/hcp-(.*)-darwin-amd64.tar.gz
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - put: hcp-cli-bucket
+          params:
+            from: dist/hcp-(.*)-linux-amd64.tar.gz
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - put: hcp-cli-bucket
+          params:
+            from: dist/hcp-(.*)-windows-amd64.zip
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+
+  - name: test-pkg
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [linter]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [linter]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: base-image
+          passed: [linter]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: test
+        config:
+          <<: *test_task_config
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/pkg/test.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: docker-images
+    plan:
+      - aggregate:
+        - get: base-image
+          passed: [build-ipmgr, build-rpmgr, build-flightrecorder, build-flightentertainment]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: hcp
+          passed: [build-ipmgr, build-rpmgr, build-flightrecorder, build-flightentertainment]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [build-ipmgr, build-rpmgr, build-flightrecorder, build-flightentertainment]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: ipmgr-bin
+          passed: [build-ipmgr]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: rpmgr-bin
+          passed: [build-rpmgr]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: flightrecorder-bin
+          passed: [build-flightrecorder]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: flightentertainment-bin
+          passed: [build-flightentertainment]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: nats-image-in
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - aggregate:
+        - task: add-ipmgr-binary
+          file: hcp/ci/pipelines/tasks/ipmgr/image.yml
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - task: add-rpmgr-binary
+          config:
+            platform: linux
+            image_resource:
+              <<: *base_image
+            inputs:
+            - name: hcp
+            - name: rpmgr-bin
+            outputs:
+            - name: rpmgr-dockerfile
+            run:
+              path: bash
+              args: ["./hcp/ci/pipelines/tasks/rpmgr/image.sh"]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - task: add-flightrecorder-binary
+          file: hcp/ci/pipelines/tasks/flightrecorder/image.yml
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - task: add-flightentertainment-binary
+          file: hcp/ci/pipelines/tasks/flightentertainment/image.yml
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - task: add-nats-dockerfile
+          config:
+            platform: linux
+            image_resource:
+              <<: *base_image
+            inputs:
+            - name: hcp
+            outputs:
+            - name: nats-dockerfile
+            run:
+              path: bash
+              args: ["./hcp/ci/pipelines/tasks/nats/dockerfile.sh"]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - task: add-redis-dockerfile
+          file: hcp/ci/pipelines/tasks/redis/dockerfile.yml
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+
+      - task: generate-tag-files
+        config:
+          platform: linux
+          image_resource:
+            <<: *base_image
+          inputs:
+          - name: hcp
+          - name: version-resource
+          outputs:
+          - name: tag-files
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/all/generate_tag_files.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: ipmgr-image
+        params:
+          build: ipmgr-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: ipmgr-image
+        params:
+          build: ipmgr-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: rpmgr-image
+        params:
+          build: rpmgr-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: rpmgr-image
+        params:
+          build: rpmgr-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: uaa-image
+        params:
+          build: hcp/containers/uaa
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: uaa-image
+        params:
+          build: hcp/containers/uaa
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightrecorder-image
+        params:
+          build: flightrecorder-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightrecorder-image
+        params:
+          build: flightrecorder-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightentertainment-image
+        params:
+          build: flightentertainment-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: flightentertainment-image
+        params:
+          build: flightentertainment-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: nats-image
+        params:
+          build: nats-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: nats-image
+        params:
+          build: nats-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: redis-image
+        params:
+          build: redis-dockerfile
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: redis-image
+        params:
+          build: redis-dockerfile
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: configuration-image
+        params:
+          build: hcp/containers/configuration
+          tag: tag-files/app_version_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: configuration-image
+        params:
+          build: hcp/containers/configuration
+          tag: tag-files/app_latest_branch_tag
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+  - name: dist-devharness
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [docker-images]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          passed: [docker-images]
+          trigger: true
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - task: bootstrap
+        config:
+          platform: linux
+          image_resource:
+            <<: *base_image
+          inputs:
+          - name: hcp
+          - name: version-resource
+          outputs:
+          - name: vagrantfile
+          run:
+            path: bash
+            args: ["./hcp/ci/pipelines/tasks/devharness/bootstrap.sh"]
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+
+      - put: devharness
+        params:
+          from: vagrantfile/hcp-(.*).tar.gz
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: build-event-notification-resource
+        params:
+          color: green
+          from: "Concourse CI"
+          message:
+            template: "<a href='${ATC_EXTERNAL_URL}/pipelines/${BUILD_PIPELINE_NAME}'>COMPLETED BUILD:</a> ${BRANCH}-${VERSION}"
+            params:
+              VERSION: file://version-resource/number
+              BRANCH: {{github-branch}}
+
+  - name: dist-api
+    plan:
+      - aggregate:
+        - get: hcp
+          passed: [docker-images]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+        - get: version-resource
+          trigger: true
+          passed: [docker-images]
+          on_failure:
+            aggregate:
+            - put: build-event-notification-resource
+              <<: *hipchat_job_failure_notification
+      - put: api
+        params:
+          from: api/ipmgr/swagger.yml
+          acl: public-read
+        on_failure:
+          aggregate:
+          - put: build-event-notification-resource
+            <<: *hipchat_job_failure_notification
+      - put: build-event-notification-resource
+        params:
+          color: green
+          from: "Concourse CI"
+          message:
+            template: "<a href='${ATC_EXTERNAL_URL}/pipelines/${BUILD_PIPELINE_NAME}'>COMPLETED BUILD:</a> ${BRANCH}-${VERSION}"
+            params:
+              VERSION: file://version-resource/number
+              BRANCH: {{github-branch}}
+
+  - name: go-checks
+    plan:
+      - aggregate:
+          - get: pr
+            trigger: true
+          - get: hcp
+      - put: pr
+        params:
+          path: pr
+          status: pending
+      - aggregate:
+        - task: linter
+          config:
+            platform: linux
+            image_resource:
+              <<: *base_image
+            inputs:
+            - name: pr
+            - name: hcp
+            run:
+              path: bash
+              args: ["./hcp/ci/pipelines/tasks/pr/go/linter.sh"]
+          on_failure:
+            put: pr
+            params:
+              path: pr
+              status: failure
+        - task: test
+          config:
+            platform: linux
+            image_resource:
+              <<: *base_image
+            inputs:
+            - name: pr
+            - name: hcp
+            run:
+              path: bash
+              args: ["./hcp/ci/pipelines/tasks/pr/go/test.sh"]
+          on_failure:
+            put: pr
+            params:
+              path: pr
+              status: failure
+        on_success:
+          put: pr
+          params:
+            path: pr
+            status: success
