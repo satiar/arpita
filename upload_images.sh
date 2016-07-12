@@ -15,3 +15,6 @@ docker push $IP:5000/hcp/flightrecorder:$TAG
 docker push $IP:5000/hcp/nats:$TAG
 docker push $IP:5000/hcp/configuration:$TAG
 docker push $IP:5000/hcp/redis:$TAG
+
+
+#will this work?
