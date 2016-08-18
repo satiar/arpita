@@ -1,7 +1,7 @@
 #!/bin/bash
 docker run \
   --rm \
-  -p 8112:8112 \
+  -p 8113:8113 \
   -e CLUSTER_ID=12345 \
   -e RPMGR_PROVIDER=local \
   -e RPMGR_DOCKER_VERSION=1.10.3-0~trusty \
