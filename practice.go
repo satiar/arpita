@@ -35,8 +35,7 @@ At end of each pass, the "highest element" would have "bubbled up
 
 Time complexity :O(n2)
 Space complexity : O(n2)
-//Bubble up the largest number after each pass
-
+/*Bubble up the largest number after each pass*/
 func bubbleSort(arr []int) []int{
 	for i := 0; i < len(arr)  ; i++ {
 		//With each pass, the right elements are getting into their final spot, 
@@ -59,9 +58,9 @@ Time: O(n2), But better than selection and bubble sort in terms of #comparisons
 Space
 
 func insertionSort(arr []int) []int {
-	//For each element in the array, compare it with all elements to its left
+	/*For each element in the array, compare it with all elements to its left
 	//Swap if it is less than an element on its left
-	// With each pass , the left half is getting sorted
+	// With each pass , the left half is getting sorted */
 	for i := 1 ; i < len(arr) ;i++ {
 		for j := i ; j > 0  && arr[j] < arr[j-1] ; j-- {
 			//Keep swapping with the element it is less than
