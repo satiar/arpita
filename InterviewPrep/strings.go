@@ -44,3 +44,18 @@ func checkPalindrome(strVal string) bool {
 	}
 	return true		
 }
+
+3. Check if 2 strings are anagrams of each other
+Algo : split bothe strings into array, then sort both arrays. Then join the individual arrays, and see if the result of joining 
+is the same
+func checkAnagram(first, second string) bool {
+	one := strings.Split(first, "")
+	two := strings.Split(second, "")
+	sort.Strings(one)
+	sort.Strings(two)
+	//Make a string out of the list
+	if strings.Join(one,"") == strings.Join(two, "") {
+		return true
+	}
+	return false
+}
