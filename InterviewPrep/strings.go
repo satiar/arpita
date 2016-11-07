@@ -144,3 +144,15 @@ func findCount(s string, char string) int {
 	}
 	return count
 }
+OR
+//Use inbuilt method
+func findCount(s string, char string) int {
+	return strings.Count(strings.ToLower(s), char)
+}
+
+10. Replace all occurences of whitespace with %20func replaceWhitespace(str string) string {
+	str = strings.Trim(str," ")
+	//replace (string, old, new , n(if <0, then replace all occurences))
+	//if n =2, replae first 2 occurences etc...
+	return strings.Replace(str," ", "%20", 2)	
+}
