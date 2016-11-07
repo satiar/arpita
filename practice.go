@@ -71,3 +71,44 @@ func insertionSort(arr []int) []int {
 }
 
 
+MERGESORT
+Divide array into smaller portions till only 1 element left in each,
+Then merge each small portion with its neighbor to form a bigger sorted array.
+So at each step of merge, both the left and right sub-array that are being merged are individually sorted
+
+func mergeSort(arr []int) []int {
+	if len(arr) <= 1 {
+		return arr
+	}
+	mid := len(arr) /2
+	left := mergeSort(arr[:mid])
+	right := mergeSort(arr[mid:])
+	
+	return merge(left, right)
+}
+
+//merge 2 sorted arrays
+func merge( left, right []int) []int {
+	result := make([]int, 0, len(left) + len(right)) 
+	for len(left)> 0 || len(right) >0 {
+		if len(left) == 0 {
+			// left is all done, just add all sorted elements of right to the result
+			return append(result, right...)
+		}
+		if len(right) == 0 {
+			//right is all done, append all remaining elems of left
+			return append(result, left...)
+		}
+		if left[0] <= right[0] {
+			result = append(result, left[0])
+			left = left[1:]
+		} else  {
+			//first element of right is smaller, shud get added to the result
+			result = append(result, right[0])
+			right = right[1:]
+		}
+	}
+	return result
+}
+
+
