@@ -59,3 +59,88 @@ func checkAnagram(first, second string) bool {
 	}
 	return false
 }
+
+4. Find the first unique character in a string
+func findUnique(s string) string {
+	m := make(map[rune]uint, len(s))
+	for _, r := range s {
+		m[r]++
+	}
+	for _, r := range s {
+		if m[r] == 1 {
+			return string(r)
+		}
+	}
+	return ""
+}
+
+5. Reverse a string
+Algo: Create a new list of runes, and assign input[i] to result[len-i+1]
+func stringReverse(s string) string {
+	
+    o := make([]rune, len(s));
+    i := len(o);
+    for _, c := range s {
+    	i--;
+    	o[i] = c;
+    }
+    return string(o);
+
+
+}
+
+6. Check if a string contains only digits
+Algo: use strconv.Atoi to see if get any errors. If it is a number, there will no error during conversion
+func checkIfNumber(s string)bool {
+	_, err := strconv.Atoi(s)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+7. Get duplicates in a string
+Algo: Add values to a map if occurs a second time and also append to a buffer
+func findDup(s string) string {
+	//
+	var buff bytes.Buffer
+	valueMap := make(map[rune]bool)
+	for _, val := range s {
+		_, exists := valueMap[val]
+		if exists {
+			// This is a duplicate, since it already exists in the Map
+			buff.WriteString(string(val))
+		} else {
+			// Add this value now, so we can track any future dups
+			valueMap[val] = true
+		}
+	}
+	return buff.String()
+}
+
+8. Find the number of vowels in a string
+func findVowels(s string) int {
+	runes := []rune(strings.ToLower(s))
+	count := 0
+	for _, val := range runes {
+		switch string(val) {
+			case "a", "e", "i", "o", "u":
+				count++
+				break;
+			default:
+		}
+	}
+	return count
+}
+
+9. Find number of occurences of a given char in a string
+func findCount(s string, char string) int {
+	runes := []rune(strings.ToLower(s))
+	count := 0
+	for _, val := range runes {
+		if string(val) == char {
+			count++
+		}
+	}
+	return count
+}
