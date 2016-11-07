@@ -116,9 +116,13 @@ func merge( left, right []int) []int {
 
 
 QUICKSORT:
-Algo:
+Algo: Choose a random element as the pivot..divide original array into 2 subarrays s.t. all elements 
+in left subarray are less than pivot, and all in right as greater than pivot.
+Recurse till only 1 element left in the array
 Time: O(n log n )
 Space : O(1)
+
+//Foll uses go-routines, since each sub-array can work independently to get its pivot and sort
 
 func qsort_pass(arr []int, done chan int) []int{
     if len(arr) < 2 {
