@@ -71,12 +71,12 @@ func insertionSort(arr []int) []int {
 }
 
 
-MERGESORT
+MERGESORT  - it is not in-place
 Divide array into smaller portions till only 1 element left in each,
 Then merge each small portion with its neighbor to form a bigger sorted array.
 So at each step of merge, both the left and right sub-array that are being merged are individually sorted
 Time : O(n log n )   https://cdn.kastatic.org/ka-cs-algorithms/merge_sort_tree_4.png
-Space:
+Space: O(n) - extra space needed to store resultset
 
 func mergeSort(arr []int) []int {
 	if len(arr) <= 1 {
@@ -114,3 +114,54 @@ func merge( left, right []int) []int {
 }
 
 
+
+QUICKSORT:
+Algo:
+Time: O(n log n )
+Space : O(1)
+
+func qsort_pass(arr []int, done chan int) []int{
+    if len(arr) < 2 {
+        done <- len(arr)
+        return arr
+    }
+    pivot := arr[0]
+    i, j := 1, len(arr)-1
+    for i != j {
+        for arr[i] < pivot && i!=j{
+            i++
+        }
+        for arr[j] >= pivot && i!=j{
+            j--
+        }
+        if arr[i] > arr[j] {
+            arr[i], arr[j] = arr[j], arr[i]
+        }
+    }
+    if arr[j] >= pivot {
+        j--
+    }
+    arr[0], arr[j] = arr[j], arr[0]
+    done <- 1;
+
+    go qsort_pass(arr[:j], done)
+    go qsort_pass(arr[j+1:], done)
+    return arr
+}
+
+func qsort(arr []int) []int {
+    done := make(chan int)
+    defer func() {
+        close(done)
+    }()
+
+    go qsort_pass(arr[:], done)
+
+    rslt := len(arr)
+    //Wait for all goroutines to be done.
+    //#goroutines == num elements
+    for rslt > 0 {
+        rslt -= <-done;
+    }
+    return arr
+}
