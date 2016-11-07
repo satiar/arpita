@@ -75,6 +75,8 @@ MERGESORT
 Divide array into smaller portions till only 1 element left in each,
 Then merge each small portion with its neighbor to form a bigger sorted array.
 So at each step of merge, both the left and right sub-array that are being merged are individually sorted
+Time : O(n log n )   https://cdn.kastatic.org/ka-cs-algorithms/merge_sort_tree_4.png
+Space:
 
 func mergeSort(arr []int) []int {
 	if len(arr) <= 1 {
