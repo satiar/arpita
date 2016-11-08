@@ -279,3 +279,27 @@ Algo: if len same, check for replacement.
 	if len1 == len2+1, check for insert
 	Loop through each element of bigger string, and see if other string "contains" it. Increase count. Return true 
 	when count == len(smaller string)
+	
+19. Compress a string 
+E.g. aaabbcc is returned as a3b2c2
+func compressAString(strVal string) string {
+	strList := strings.Split(strVal, "")
+	count := 0
+	var buffer bytes.Buffer
+	prev := strList[0]
+	for _, val :=range strList {
+		fmt.Println("val is", val)
+		if val == prev {
+			count++
+		} else {
+			fmt.Println(val, "val is not same as", prev)
+			buffer.WriteString(prev+strconv.Itoa(count))
+			prev = val
+			count =1
+		}
+	}
+	//Write out the last character's count
+	buffer.WriteString(strList[len(strList)-1]+ strconv.Itoa(count))
+	return buffer.String()
+}
+
