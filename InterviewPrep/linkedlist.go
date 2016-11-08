@@ -61,4 +61,40 @@ LinkedListNode nthToLast(LinkedListNode head, int n) {
   return p1; 
 }
 
+4. Delete a node with access to only that node
+Algo : Since there is no head etc available, assign the next node's pointer and data to this node, hereby indirectly deleting
+this node - IMPOSSIBLE IS NODE IS THE LAST NODE
+  next := thisNode.next
+  thisNode.Data = next.Data
+  thisNode.Next = next.Next
   
+  5. Add two numbers represented by a linked list (reversed)   1->2->3 + 6->1->4 = 321+ 416 = 7->3->7
+  Algo : Solve recursively. Start at the head. add and recurse sending the carry-over to next call.
+  //pseudo code 
+  addList(l1, l2 *node, carry int) {
+    if l1 == null && l2 == null && carry == 0 {
+        return null
+    }
+    //create a new node
+    var result Node{}
+    sum := carry
+    if l1 != null {
+        sum += l1.data
+    }
+    if l2 != null {
+      sum += l2.data
+    }
+    //get the value to be put in result
+    result.Data = sum % 10
+    //recurse 
+    carry := 0
+    if sum > 10 {
+        carry = 1
+    }
+    nextNode := addList(l1.next (SEND NULL IF IT IS NULL), l2.next, carry)
+    result.next = nextNode
+    
+  }
+  return result
+}
+    
