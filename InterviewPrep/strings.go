@@ -246,3 +246,8 @@ Algo : Use the built-in Replace method
 func removeChar(s string, char string) string {
 	return strings.Replace(str,char, "", 2)	
 }
+	
+//!!!!!!!!!TODOS!!!!!!!!!!!!!!!!!!!!!!
+15. Find the longest palindrome
+	
+16. Sort a list of strings based on length of the strings
