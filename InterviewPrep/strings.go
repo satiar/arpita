@@ -251,3 +251,18 @@ func removeChar(s string, char string) string {
 15. Find the longest palindrome
 	
 16. Sort a list of strings based on length of the strings
+type ByLength []string
+func (s ByLength) Len() int {
+    return len(s)
+}
+func (s ByLength) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+func (s ByLength) Less(i, j int) bool {
+    return len(s[i]) < len(s[j])
+}
+
+func order(s []string)[]string {
+	sort.Sort(ByLength(s))
+	return s
+}
