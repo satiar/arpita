@@ -271,3 +271,11 @@ func order(s []string)[]string {
 Algo 1 : split to get a list ->sort ->join to get a string ->both strings should be equal
 Algo 2 : for each char in first string, do a map[char]++, 
 	and for each char in second string, do a map[char]--....if map[char] <0,return 0
+	
+18. One-away. Check if one string is 1-away from another. One insert, one delete, or one replacement away
+Algo: if len same, check for replacement.
+	Loop through length of strings. Get char at ith position for both. If different and the bool foundDiff == true (which means already
+	found a difference, then return false)
+	if len1 == len2+1, check for insert
+	Loop through each element of bigger string, and see if other string "contains" it. Increase count. Return true 
+	when count == len(smaller string)
