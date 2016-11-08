@@ -302,4 +302,49 @@ func compressAString(strVal string) string {
 	buffer.WriteString(strList[len(strList)-1]+ strconv.Itoa(count))
 	return buffer.String()
 }
+	
+20. Rotate a matrix
+func rotateMatrix(strVal [][]int) [3][3]int {
+	//val is a 2d matrix
+	result := [3][3]int{}
+
+
+	for x, innerList := range strVal {
+		for y, val := range innerList {
+			result[y][x] = val
+		}
+	}
+	return result
+}
+//in-place???
+	
+21. Return a matrix such that if any element is 0, all elements in that row and column are set to 0
+func replaceRowColumnZeros(strVal [][]int) [][]int {
+	result := strVal
+	rowToMakeZero := []int{}
+	columnToMakeZero := []int{}
+	for x, innerList := range strVal {
+		for y, val := range innerList {
+			if val == 0 {
+				rowToMakeZero = append(rowToMakeZero, x)
+				columnToMakeZero = append(columnToMakeZero, y)
+			}
+		}
+	}
+	for _, val := range rowToMakeZero {
+		for i:=0; i <3; i++ {
+			result[val][i] = 0
+		}
+	}
+	for _, val := range columnToMakeZero {
+		for i:=0; i <3; i++ {
+			result[i][val] = 0
+		}
+	}
+	
+	return result
+	
+}
+
+
 
