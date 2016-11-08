@@ -346,5 +346,57 @@ func replaceRowColumnZeros(strVal [][]int) [][]int {
 	
 }
 
+22. Check if characters in a string are unique
+Algo: create and array of size 128, and intialize it with zeros.
+Loop through each char in the string, and set the array[char] = 1, if it is not 1, else return false (since if value is one for 
+the given char, means this char has been traversed before, so not unique)
+func checkUnique(value string) bool {
+	exists := [2048]bool{}
+	for index :=0 ;index <len(value); index++ {
+		theChar := value[index]
+		if exists[theChar] == false {
+			exists[theChar] = true
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
+23. Given a sorted array of strings which is interspersed with empty strings, write a method to find the location of a given string
+						
+Example: find “ball” in [“at”, “”, “”, “”, “ball”, “”, “”, “car”, “”, “”, “dad”, “”, “”] will return 4 
+	Example: find “ballcar” in [“at”, “”, “”, “”, “”, “ball”, “car”, “”, “”, “dad”, “”, “”] will return -1 
+					
+func findInListWithEmptyStrings(list []string, start, end int, element string) int {
+	//confirm there is some value in this list
+	for start <= end  {
+		//clean up empty strings at the end, to save on time and space
+		for start <= end && list[end] == "" {
+			end--
+		}
+		if end < start {
+			//no real string , only empty strings in this..
+			return -1
+		}
+		mid := (start+end)/2
+		if element == list[mid] {
+			return mid
+		}
+		if element < list[mid] {
+			//search in left half
+			end = mid -1
+		} else  {
+			//search in right half
+			start = mid + 1
+		}
+	}
+	return -1
+}
+	
+24. Check if s2 is a rotation of s1. eg is waterbottle is in erbootlewat ?
+Algo : check edge cases, then check if s2 is in s1s1  erbootlewaterbootlewat
+
+
 
 
