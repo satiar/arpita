@@ -239,3 +239,10 @@ for len(c) > 0 {
 	
 if c[0] == a[0] {
 		recurse with 
+	
+	
+14. Remove a char from a string
+Algo : Use the built-in Replace method
+func removeChar(s string, char string) string {
+	return strings.Replace(str,char, "", 2)	
+}
