@@ -203,3 +203,39 @@ func insertAt(i int, char string, perm string) string {
 	return start + char + end
 }
 
+
+12. Remove duplicates
+Algo: maintain a list of not-duplicated values, by checking for existing values in a maintained Map
+func removeDuplicates(a []int) []int {
+	result := []int{}
+	seen := map[int]int{}
+	for _, val := range a {
+		if _, ok := seen[val]; !ok {
+			result = append(result, val)
+			seen[val] = val
+		}
+	}
+	return result
+}
+
+13. Check if one string(C) is the result of interleaving of two other strings( A & B)  - NOT IMPLEMENTED !!!!!!!
+Algo: Dynamic programming
+Start with first char of C.
+//pseudo-code
+for len(c) > 0 {
+	//first check length of c == len(a) + len(b)
+	//then compare first char of c with first of a, if match, move both to next char
+	// else check if matches b, 
+	// else return false
+	if c[0] == a[0] {
+		c = c[1:]
+		a = a[1:]
+	} else if c[0] == b[0] }
+		c = c[1:]
+	b = b[1:]
+	} else {
+		return false
+}
+	
+if c[0] == a[0] {
+		recurse with 
