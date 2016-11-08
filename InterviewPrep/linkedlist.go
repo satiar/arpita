@@ -97,4 +97,47 @@ this node - IMPOSSIBLE IS NODE IS THE LAST NODE
   }
   return result
 }
+
+6. Get mid of a singly linked list.
+Algo: Start 2 pointers(both at head initially). Move slow by 1 each time, and fast by 2 (fast = fast.next.next)
+When fast.next == null, mid = slow
+
+7. Check if a linked list is a palindrome
+Algo :traverse to mid , using slow and fast runner concept above.
+Reverse the second half
+Compare each element of the two halves
+
+//pseudo code
+func isPalindrome(head *Node) bool {
+  reversed := reverse(head)
+  return isEqual(head, reversed)
+}
+
+func reverse(node *Node) *Node {
+  slow = head
+  fast = head
+  for node != null {
+    n := Node {Data: node.data,}
+    n.next = head
+    head = n 
+    node = node.next
+  }
+  return head
+}
+func isEqual(one, two *Node) bool {
+  for one == null && two == null {
+    if one.data != two.data {
+      return false
+    }
+    one = one.next
+    two = two.next
+  }
+  //if it has come here, it has reached the end for both the lists
+  // If they are not the same size, foll will not be true, and thus return false
+  return one == null && two == null
+}
+  
+
+    
+    
     
