@@ -266,3 +266,8 @@ func order(s []string)[]string {
 	sort.Sort(ByLength(s))
 	return s
 }
+	
+17. Check if two strings are permutations of each other
+Algo 1 : split to get a list ->sort ->join to get a string ->both strings should be equal
+Algo 2 : for each char in first string, do a map[char]++, 
+	and for each char in second string, do a map[char]--....if map[char] <0,return 0
