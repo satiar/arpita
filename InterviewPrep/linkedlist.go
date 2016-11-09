@@ -138,6 +138,21 @@ func isEqual(one, two *Node) bool {
 }
   
 
-    
+8. Check if 2 singly linked lists have an intersection
+e.g. 1->2->6->8->9  and 4->5->8->9 are intersecting.
+
+Algo
+1. For 2 lists to be intersecting, at -least the last node should be the same 
+Therefore, loop through list to get the tail node for each, and also keep a track of their lengths
+2. Check if tails are same, else return false
+3. Check if length is same, if not, need to skip "len-diff" ahead in the longer list. Explanation below
+  1->2->3->4->5->6
+           3->5->6
+
+In the above, the first 3 nodes are not affecting the result, so they can be skipped.so we start at the 0th element for shorter list 
+and the 4th(6-3+1) element for the longer list. We compare correcponding elements till we find them to be the same in both.
+
+4. Keep going till nodes in each are different. Return the first "same" node in both lists
+
     
     
