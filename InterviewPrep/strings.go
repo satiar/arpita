@@ -109,10 +109,10 @@ func findDup(s string) string {
 		_, exists := valueMap[val]
 		if exists {
 			// This is a duplicate, since it already exists in the Map
-			buff.WriteString(string(val))
 		} else {
 			// Add this value now, so we can track any future dups
 			valueMap[val] = true
+			buff.WriteString(string(val))
 		}
 	}
 	return buff.String()
