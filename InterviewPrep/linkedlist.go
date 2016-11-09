@@ -155,4 +155,7 @@ and the 4th(6-3+1) element for the longer list. We compare correcponding element
 4. Keep going till nodes in each are different. Return the first "same" node in both lists
 
     
-    
+9. Check if a linked list is circular
+Algo : Flyods algo - Start slow and fast pointers.
+If slow and fast are same at some point, then the list is circular, else if they both reach the end, then it is not circular.
+
