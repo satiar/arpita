@@ -397,6 +397,63 @@ func findInListWithEmptyStrings(list []string, start, end int, element string) i
 24. Check if s2 is a rotation of s1. eg is waterbottle is in erbootlewat ?
 Algo : check edge cases, then check if s2 is in s1s1  erbootlewaterbootlewat
 
+25. Given a string containing Roman numerals, print the decimal equivalent of it
+	
+package main
 
+import (
+    "fmt"
+)
+// I = 1
+// V = 5
+// X = 10
+// L = 50
+// C = 100
+
+//Return the decimal equivalent of a roman numeral
+// input = XV 10 +5 =15
+// XXV =  
+// IX = 9 , XI = 11
+// VI  = 5+1
+// IVX - invalid 
+
+func main() {
+    fmt.Println(getDecimal("XV"))
+}
+
+
+
+
+//input = XI = 11
+//input = IX = 9
+// input = XIV = 14
+
+func getDecimal (s string) int {
+    eMap := make(map[string]int)
+    eMap["I"] = 1
+    eMap["V"] = 5
+    eMap["X"] = 10
+    eMap["L"] = 50
+    eMap["C"] = 100
+    runes := []rune(s)
+    result, ok := eMap[string(runes[len(runes)-1])]
+    if ok {
+        for i := len(runes) -2; i >= 0 ; i-- {
+            //check if i am less than right char then subtract me, else add me
+            curr, _ := eMap[string(runes[i])]
+            prev, _ := eMap[string(runes[i+1])]
+            if curr < prev {
+                result -= curr
+            } else {
+                result += curr
+            }
+        }
+    } else {
+        return 0
+        //fmt.Errorf("Invalid characters in provided input")
+    }
+    return result
+        
+}
 
 
