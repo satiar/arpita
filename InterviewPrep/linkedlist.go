@@ -159,3 +159,7 @@ and the 4th(6-3+1) element for the longer list. We compare correcponding element
 Algo : Flyods algo - Start slow and fast pointers.
 If slow and fast are same at some point, then the list is circular, else if they both reach the end, then it is not circular.
 
+10. Follow -up : Find where the loop is?
+Do what is done above, once collide, move slow to head, and keep fast where it is
+Now move both by 1 step. Where collide, is the loop
+
