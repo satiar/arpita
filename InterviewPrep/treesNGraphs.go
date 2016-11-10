@@ -84,5 +84,33 @@ func checkBST(node * Node, min, max int) bool {
 }
     
     
-    
+7. Find the "next node" of a given node in a binary tree (IN -order traversal)
+Algo: If node has right child, then successor = leftmost child of right subtree
+If not, successor = node for which this node falls in the left sub tree
+
+func getSucc(node*Node)*Node {
+  if node == null {
+      return null
+  }
+  if n.right != null {
+      //get leftmost child
+    return getLeftmost(n.right)
+  }
+  n := node
+  x := n.parent
+  for x != null && x.Left != n.data {
+    n = x
+    x = x.parent
+  }
+  return x
+}
+func getLeftmost(node *Node ) *Node {
+  if node == null {
+    return null
+  }
+  for node.left != null {
+    node = node.left
+  }
+  return node
+}
   
