@@ -113,4 +113,12 @@ func getLeftmost(node *Node ) *Node {
   }
   return node
 }
-  
+
+8. Given a list of projects, and list of dependencies (e.g project a has to be built before project b...), find a build order that will
+be successful.
+Make a graph with directional edges.
+add nodes that have no "incoming edges" i.e. no dependencies.
+When adding those nodes, remove outgoing edges of that node(since it is no longer a dependency for others, it is already built)
+Keep adding nodes with no "incoming edges"
+done
+
