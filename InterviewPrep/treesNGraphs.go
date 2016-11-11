@@ -122,3 +122,55 @@ When adding those nodes, remove outgoing edges of that node(since it is no longe
 Keep adding nodes with no "incoming edges"
 done
 
+
+9. Uniquely identify a tree. Or given 2 arrays, construct the binary tree.
+Following combination can uniquely identify a tree.
+
+10. Check if one tree is a subset of another tree
+Algo: If trees are small, do the inorder traversal of both, and check if big contains small 
+
+Inorder and Preorder.
+Inorder and Postorder.
+Inorder and Level-order.
+
+And following do not.
+Postorder and Preorder.
+Preorder and Level-order.
+Postorder and Level-order.
+
+11. Write a "getRandomNode" metod for a BST (Get ith node in an inorder traversal)
+Algo: If it is inorder, then right always comes after left
+//pseudo code
+func getRandomNode(root *Node) *Node {
+  i : math.Rand(root.Size)
+  return root.getIthNode(i)
+}
+func getIthNode(int i) *Node {
+  {
+    if i <left.Size {
+      //in left tree
+      return left.getIthNode(i)
+    } else if i == left.Size {
+      //this is the node
+      return this
+    } else {
+      //It is in the right node, so you can easily skip all elements in the left subtree,
+      // which will be in curr+left.size spaces after this current node.
+      // so to get to the right, you need to skip left.size nodes
+      right.getIthNode(i-left.size)
+    }
+  } 
+  
+12. Given a tree, find the path with max sum
+Algo: convert the tree into an array (FIND OUT HOW ????????)
+Initialize:
+max = 0
+local_max = 0
+
+Loop for each element of the array
+  local_max = local_max + a[i]
+  if local_max < 0 
+    local_max = 0 
+  if max > local_max
+    max = local_max
+Finally, return max
