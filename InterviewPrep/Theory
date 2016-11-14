@@ -1,0 +1,9 @@
+1. How does hash table work.
+For every key, the "hashing function" creates an "index", which denotes the spot at which the "value" corresponding to this key will be
+stored.
+Sometimes, the same index might be generated for 2 keys, causing a "collision".
+Collision resolution - when it does occur, look from that point on for the next "open" slot, also called as 
+"open addressing".
+Another approach is "chaining" where the index locaiton in the array now stores a pointer to a collection 
+(as many items as have the same index). The more the collisions, the more the number of items in that collection,
+hence more difficult to search.
