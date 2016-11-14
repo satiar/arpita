@@ -170,6 +170,44 @@ func qsort(arr []int) []int {
     return arr
 }
 
+Q. Find index of an element in a sorted, but rotated list
+// Get the pivot (first element in list which is smaller than previous)
+// If given element is > arr[0], then binary search in left sub-tree, else in right subtree
+func getIndex(element int, elemList []int) int {
+	if len(elemList) == 0 {
+			//error
+	}
+	//find pivot
+	var pivot int
+	for index, val := range elemList {
+		if index > 0 && val < elemList[index-1] {
+			//found pivot
+			pivot = index
+			Break
+		}
+	}
+	fmt.Println("pivot is at ", pivot)
+	if elemList[0] < element {
+		return binarySearch(elemList, 0, pivot-1, element)
+	} 
+		return binarySearch(elemList, pivot, len(elemList)-1, element)
+}
+
+
+func binarySearch(arr []int,  low,  high,  key int) int {
+   if (high < low) {
+       return -1
+	}
+   mid := (low + high)/2
+   if (key == arr[mid]) {
+       return mid
+   }
+   if (key > arr[mid]) {
+       return binarySearch(arr, (mid + 1), high, key)
+  }
+   return binarySearch(arr, low, (mid -1), key)
+}
+
 
 LINKED LISTS
 1. Check if a linked list is a palindrome
