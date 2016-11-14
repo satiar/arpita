@@ -64,5 +64,15 @@ func getSubsets(arr []int, index int) [][]int {
   }
   //Add this list of new subsets to "allSubsets"
   
-  
-
+4. Towers of Hanoi S(tart)E(nd)M(iddle), SME, Print, MES
+func towers(disk, start, end, middle int) {
+    //Check base case
+    if start >end {
+      //error
+    }
+    towers(disk-1, start, middle, end )
+    fmt.Println("Move disk %d from %d to %d", disk, start, end)
+    towers(disk-1, middle, end, start)
+    
+}
+ 
