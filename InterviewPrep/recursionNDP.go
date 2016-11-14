@@ -76,3 +76,22 @@ func towers(disk, start, end, middle int) {
     
 }
  
+5. Find number of valid parenthese combinations.
+  Algo: As long as left remaining, add left and recurse.
+  func printParen(left, right int, result string) {
+    if left == right {
+      fmt.Println(result)
+    }
+    if left <right {
+      //invalid state
+      return
+    }
+    if left > 0 {
+      //still have left parens, recurse
+      printParen(left-1, right, result + "(")
+    }
+    if right > 0 {
+      //have right paren, recurse
+      printParen(left, right-1, result + ")")
+    }
+  }
