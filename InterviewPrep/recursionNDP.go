@@ -126,3 +126,34 @@ func towers(disk, start, end, middle int) {
     valArr[amount][index] = ways
     return ways
   }
+  
+8. Box stacking
+For each box, get the max height with it at the bottom. Save the computed height in a map for re-use
+  
+  func CreateStack(boxes []Box ) int {
+    //Sort by height
+    sort.Sort(boxes)
+    //intitalise a map to store the already-calculated max height for a given box
+    heightMap := make(map[int]int)
+    for i := 0 ; i <len(boxes) ; i++ {
+      height := createStack(boxes, i , heightMap)
+      maxHeight = math.Max(maxHeight, height)
+    }
+    return maxHeight
+  }
+  func createStack(boxes []Box, index int, heightMap map[int]int) int {
+    //check if maxHeight already computed for Box at this index
+    // if yes, return that stored value
+    //if not, loop through all boxes "above" this box, and find max height
+    bottom := boxes[index]
+    for i := index + 1 ; i < len(boxes) ; i++ {
+      currBox := boxes[i]
+      if canBeAbove(currBox, bottom) {
+        height := createStack(boxes, i , heightMap)
+        maxHeight = math.Max(maxHeight, height)
+      }
+      maxHeight += bottom.height
+      heightMap[index] = maxHeight
+      return maxHeight
+    }
+  }
