@@ -27,7 +27,6 @@ func swap(arr []int, i, j int) []int{
 	return arr
 }
 
-
 BUBBLE SORT
 Algo: Loop through all elements, and compare each ith element with i+1 th element
 If a[i] >a[i+1], swap, else move on
