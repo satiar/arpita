@@ -95,3 +95,18 @@ func towers(disk, start, end, middle int) {
       printParen(left, right-1, result + ")")
     }
   }
+
+6. Paint fill. Given a screen, fill a pixel with say Green, and bleed outward till you hit a different color. 
+  i.e. fill all red boxes with green start at red box(row, col), till you hit a non-red box
+
+  func fill(screen [][]int, row, col int, origColor, newColor Color) {
+    //check edge cases, row and col have not reached either end
+    
+    if screen[row][col] == origColor {
+      //continue filling with new color
+      fill(screen, row-1, col, origColor, newColor)
+      fill(screen, row, col-1, origColor, newColor)
+      fill(screen, row+1, col, origColor, newColor)
+      fill(screen, row, col+1, origColor, newColor)
+    }
+  }
