@@ -110,3 +110,19 @@ func towers(disk, start, end, middle int) {
       fill(screen, row, col+1, origColor, newColor)
     }
   }
+
+7. Get all possible denoms for a given amount
+  func makeChange(amount int, denoms []int, index int, valArr [][]int) int{
+    //if value present in array, get it
+    if valArr[amount][index] > 0 {
+      return valArr[amount][index]
+    }
+    ways := 0
+    denom := denoms[index]
+    for i := 0 ; denom  <=amount ;i++ {
+      amountRemain = amount - denom *i
+      ways += makeChange(amountRemaining, denoms, index+1, valArr)
+    }
+    valArr[amount][index] = ways
+    return ways
+  }
