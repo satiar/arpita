@@ -208,6 +208,35 @@ func binarySearch(arr []int,  low,  high,  key int) int {
 }
 
 
+Q. Given a matrix in which each row and each column is sorted, write a method to nd an element in it 
+	//Start at top right
+	// If element less than current move left, else move down
+func findInSortedRowNCol(matrix [][]int, element int ) (int, int) {
+	return find(0, len(matrix)-1, element, matrix)
+}
+
+
+func find(row, col, element int , matrix [][]int) (int, int) {
+	fmt.Println(row, col)
+	//boundary cases
+	if row <0 || row > len(matrix)-1 || col < 0 || col > len(matrix[0])-1 {
+		return -1, -1
+	}
+	currElement := matrix[row][col]
+	fmt.Println(currElement)
+	if element == currElement {
+		return row, col
+	}
+	if element < currElement {
+		return find(row, col-1, element, matrix)
+	}
+	if element > currElement {
+		return find(row+1, col, element, matrix)
+	}
+	return -1, -1
+}
+
+
 LINKED LISTS
 1. Check if a linked list is a palindrome
 Algo: Traverse to mid, reverse the list from mid->end. Compare the values in each sublist
