@@ -236,6 +236,21 @@ func find(row, col, element int , matrix [][]int) (int, int) {
 	return -1, -1
 }
 
+Q. Find the rank of a given number in a stream of integers.
+Store the integers in a BST. Algo then is :
+func getRank(node Node, x int) int{
+	if node.Data == x, return node.LeftSize()
+	if x < node.Data , return getRank(node.Left, x)
+	if x >node.Data, return node.LeftSize + 1 + getRank(node.Right, x)
+}
+
+Q. Peaks and valley - Given an array of integers, sort them in alteranting peaks(adjacent less than element)
+and valley(adjacent more than element)
+
+Algo : normal sort the array
+start from index 1, jump 2 elements at a time
+swap each a[i]th element with previous element
+
 
 LINKED LISTS
 1. Check if a linked list is a palindrome
