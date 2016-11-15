@@ -163,3 +163,27 @@ If slow and fast are same at some point, then the list is circular, else if they
 Do what is done above, once collide, move slow to head, and keep fast where it is
 Now move both by 1 step. Where collide, is the loop
 
+
+11. Listy is a data structure which does not have a "size" property, but does have "elementAt(i) in O(1) time". Its elements
+are sorted. Find an element in a given listy.
+Algo: We do not know the "len", so cannot start a binary search right away.
+But we can compute the length, by iterating till we reach an index i  s.t a[i] = -1 (which is the result Listy returns when
+                                                                                     index is out of bounds)
+We can either loop through the list linearly (till we get -1 as an answer) . This would take O(n) time.
+OR 
+we "double the index each time" thus reducing this computation to log n .How?
+If we start at index 1, then 2, then 4..then 8...how many times before we hit the actual size..i.e find k s.t.2^k = n, 
+hence k = log n , so we need log n steps to compute the length of the listy.
+
+func search(listy Listy, value int) {
+  index := 1
+  for listy.elementAt(i) != -1 && list.ElementAt(i) < value  {
+    index *= 2
+  }
+  return binarySearch(listy, value, index/2, index)
+}
+func binarySearch (list Listy, value, low, high int) int {
+  //regular binary search
+}
+
+
