@@ -24,10 +24,11 @@ operator who wants to do the intial deploy of HCP (via bootstrap install hcp.pro
   c. Use an in-memory state store for?????
   d. Setup Cloud provider ( e.g. add ClusterID tags to AWS subnets, validate can reach openstack endpoints with tenant creds etc)
   e. Creae security groups
-  f. Create as many computes with Profile = kubernetes-master, and in the specified zone
-  
+  f. Create as many computes with Profile = kubernetes-master, and in the specified zone (Profile used to help configure node
+  one way or another. e.g. if node, then have an EBS block device mounted, if master, then configure etcd )
+    i. Apply the terraform template, and persists the TF state in an in-memory state store
 
-\4. Cl\oudFoundry - Use buildpacks which are a bunch of scripts that help detect and confirgure the runtime environment 
+4. CloudFoundry - Use buildpacks which are a bunch of scripts that help detect and confirgure the runtime environment 
 for an application.
 When an app is staged, CF checks if the first buildpack(pre-sorted in a given priority order) is compatible with the app. 
 If not, it moves on to checking the next one...if none is found, staging of the app fails.
