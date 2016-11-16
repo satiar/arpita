@@ -7,3 +7,15 @@ Collision resolution - when it does occur, look from that point on for the next 
 Another approach is "chaining" where the index locaiton in the array now stores a pointer to a collection 
 (as many items as have the same index). The more the collisions, the more the number of items in that collection,
 hence more difficult to search.
+
+2. SDL - Specification and Descriptoin Language
+
+3. Understanding Stackato 4.0
+https://docs.hpcloud.com/stackato/
+
+4. CloudFoundry - Use buildpacks which are a bunch of scripts that help detect and confirgure the runtime environment 
+for an application.
+When an app is staged, CF checks if the first buildpack(pre-sorted in a given priority order) is compatible with the app. 
+If not, it moves on to checking the next one...if none is found, staging of the app fails.
+Lifecycle of an app (in CF)
+a. User navigates to directory holding application code, and runs a "cf push"
