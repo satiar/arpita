@@ -113,17 +113,17 @@ func isPalindrome(head *Node) bool {
   return isEqual(head, reversed)
 }
 
-func reverse(node *Node) *Node {
-  slow = head
-  fast = head
-  for node != null {
-    n := Node {Data: node.data,}
-    n.next = head
-    head = n 
-    node = node.next
+func reverse(head *Node) *Node {
+  currNode = head
+  for currNode!=null{
+     nextNode = currNode.next;
+     currNode.next = prevNode;
+     prevNode = currNode;
+     currNode = nextNode;
   }
-  return head
+  return prevNode
 }
+
 func isEqual(one, two *Node) bool {
   for one == null && two == null {
     if one.data != two.data {
