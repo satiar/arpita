@@ -13,7 +13,21 @@ hence more difficult to search.
 3. Understanding Stackato 4.0
 https://docs.hpcloud.com/stackato/
 
-4. CloudFoundry - Use buildpacks which are a bunch of scripts that help detect and confirgure the runtime environment 
+HCP
+1. Debian package creation: Copy terraform binary, user docs(sample .properties file), bootstrap binary into a temp folder,
+then use "fpm" ( a tool to create .deb files)  to create the debian package. This debian package is then installed by the 
+operator who wants to do the intial deploy of HCP (via bootstrap install hcp.properties)
+
+2. Bootstrap install workflow
+  a. Parse ad validate the .properties file (no. of gluster nodes at least 2, subnetIDs provided for AWS etc)
+  b. use NTP to have the "same" synchronised time to a given reference,  on all cluster components.
+  c. Use an in-memory state store for?????
+  d. Setup Cloud provider ( e.g. add ClusterID tags to AWS subnets, validate can reach openstack endpoints with tenant creds etc)
+  e. Creae security groups
+  f. Create as many computes with Profile = kubernetes-master, and in the specified zone
+  
+
+\4. Cl\oudFoundry - Use buildpacks which are a bunch of scripts that help detect and confirgure the runtime environment 
 for an application.
 When an app is staged, CF checks if the first buildpack(pre-sorted in a given priority order) is compatible with the app. 
 If not, it moves on to checking the next one...if none is found, staging of the app fails.
