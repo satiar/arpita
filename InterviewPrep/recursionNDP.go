@@ -157,3 +157,23 @@ For each box, get the max height with it at the bottom. Save the computed height
       return maxHeight
     }
   }
+  
+ 
+  
+  Func checkComplete(arr []int) bool {
+	valueMap := make(map[int]string)
+	Arr2 := []int{}
+	//Traverse the array
+  currIndex := 0
+  For index := 0 ;index < len(arr)  ; index++   {
+  currIndex += arr[currIndex]
+  arr2 = append(arr2, arr[currIndex))
+  }
+  sort.Int(arr1)
+  sort.Int(arr2)
+  //Check if the array being created after visiting all the elements, 
+  return arr1 == arr2
+}
+
+
+
