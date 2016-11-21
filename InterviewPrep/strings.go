@@ -455,5 +455,19 @@ func getDecimal (s string) int {
     return result
         
 }
-
+26. Print FizzBuzz if no. divisible by 5 & 3, fizz if only 3, buzz if only 5. Print the number otherwise. For all n <100.
+func FizzBuzz(amount int) string {  
+    results := ""
+    for i := 1; i <= amount; i++ {
+        result := ""
+        if i%3 == 0 { result += "Fizz" }
+        if i%5 == 0 { result += "Buzz" }
+        if result != "" {
+            results += result + "\n"
+            continue
+        }
+        results += fmt.Sprintf("%d\n", i)
+    }
+    return results
+} 
 
